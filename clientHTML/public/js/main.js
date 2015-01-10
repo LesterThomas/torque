@@ -5,10 +5,7 @@ function showTimeline(startDate, endDate, divContainer)
 								
 	var timelineObjectArray=[];
 	var ObjectId=1;
-	var queryStartDate;
-	var queryEndDate;
-	queryStartDate=startDate-(18*60*60*1000); // begin query 12 hours before 6 am
-	queryEndDate=endDate+(12*60*60*1000); // end query 12 hours after midnight
+
 	//alert(oneWeekAgo);
     $.getJSON( '/db/_all_docs?startkey="trip:0"&endkey="trip:9999999999"&include_docs=true' , function( indata ) {
 			  //alert(JSON.stringify(data));
@@ -79,14 +76,13 @@ function showTimeline(startDate, endDate, divContainer)
 	oneDayInMillis=1*24*60*60*1000;
 	startDate=new Date(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate(), 6, 0, 0, 0);
 	endDate=new Date(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate(), 23, 59, 59, 999);
+
+
 	startDateNum=startDate.getTime();
 	endDateNum=endDate.getTime();
-
-	for(var x=0;x<7;x++) {
-		showTimeline(startDateNum, endDateNum, 'mytimeline'+x);
-		startDateNum=startDateNum-oneDayInMillis;
-		endDateNum=endDateNum-oneDayInMillis;
-	}
-
+	startDateNum=startDateNum-10*oneDayInMillis; // show from 10 days ago
+	
+	showTimeline(startDateNum,endDateNum,'mytimeline');
+		
   });
 })(jQuery);
