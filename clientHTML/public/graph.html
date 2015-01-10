@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+
+<!-- #######################################################
+
+HOW TO CREATE AN INTERACTIVE GRAPH USING CSS3 & JQUERY [TUTORIAL]
+
+"How to create an Interactive Graph using CSS3 & jQuery [Tutorial]" was specially made for DesignModo by our friend Valeriu Timbuc.
+
+Links:
+http://vtimbuc.net
+http://designmodo.com
+http://vladimirkudinov.com
+
+######################################################## -->
+
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+
+	<title>How to create an Interactive Graph using CSS3 & jQuery</title>
+
+	<style>html,body{height:100%}body{min-height: 700px;-webkit-box-shadow:inset 0 0 0 5px #f2f2f2,inset 0 0 0 10px #90c0aa,inset 0 0 0 15px #f2f2f2;-mox-box-shadow:inset 0 0 0 5px #f2f2f2,inset 0 0 0 10px #90c0aa,inset 0 0 0 15px #f2f2f2;box-shadow:inset 0 0 0 5px #f2f2f2,inset 0 0 0 10px #90c0aa,inset 0 0 0 15px #f2f2f2;margin:0}#graph-wrapper{width:640px;margin:0 auto;padding-top:275px}</style>
+
+	
+	<style>
+	/* #######################################################
+
+HOW TO CREATE AN INTERACTIVE GRAPH USING CSS3 & JQUERY [TUTORIAL]
+
+"How to create an Interactive Graph using CSS3 & jQuery [Tutorial]" was specially made for DesignModo by our friend Valeriu Timbuc.
+
+Links:
+http://vtimbuc.net
+http://designmodo.com
+http://vladimirkudinov.com
+
+######################################################## */
+
+/* Resets */
+.graph-container,
+.graph-container div,
+.graph-container a,
+.graph-container span {
+	margin: 0;
+	padding: 0;
+}
+
+/* Gradinet and Rounded Corners */
+.graph-container, #tooltip, .graph-info a {
+	background: #ffffff;
+	background: -moz-linear-gradient(top,  #ffffff 0%, #f9f9f9 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f9f9f9));
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#f9f9f9 100%);
+	background: -o-linear-gradient(top,  #ffffff 0%,#f9f9f9 100%);
+	background: -ms-linear-gradient(top,  #ffffff 0%,#f9f9f9 100%);
+	background: linear-gradient(to bottom,  #ffffff 0%,#f9f9f9 100%);
+
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+/*  Graph Container */
+.graph-container {
+	position: relative;
+	width: 550px;
+	height: 300px;
+	padding: 20px;
+	
+	-webkit-box-shadow: 0px 1px 2px rgba(0,0,0,.1);
+	-moz-box-shadow: 0px 1px 2px rgba(0,0,0,.1);
+	box-shadow: 0px 1px 2px rgba(0,0,0,.1);
+}
+
+.graph-container > div {
+	position: absolute;
+	width: inherit;
+	height: inherit;
+	top: 10px;
+	left: 25px;
+}
+
+.graph-info {
+	width: 590px;
+	margin-bottom: 10px;
+}
+
+/* Text Styles */
+#tooltip, .graph-info a {
+	height: 20px;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	line-height: 20px;
+	color: #646464;
+}
+
+.tickLabel {
+	font-weight: bold;
+	font-size: 12px;
+	color: #666;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* Tooltip */
+#tooltip {
+	position: absolute;
+	display: none;
+	padding: 5px 10px;
+	border: 1px solid #e1e1e1;
+}
+
+/* Links */
+.graph-info a {
+	position: relative;
+	display: inline-block;
+	float: left;
+	padding: 7px 10px 5px 30px;
+	margin-right: 10px;
+	text-decoration: none;
+	cursor: default;
+}
+
+/* Color Circle for Links */
+.graph-info a:before {
+	position: absolute;
+	display: block;
+	content: '';
+	width: 8px;
+	height: 8px;
+	top: 13px;
+	left: 13px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+/* Colors For each Link */
+.graph-info .speed { border-bottom: 2px solid #71c73e; }
+.graph-info .heading { border-bottom: 2px solid #77b7c5; }
+
+.graph-info .speed:before { background: #71c73e; }
+.graph-info .heading:before { background: #77b7c5; }
+
+/* Lines & Bars Buttons */
+#lines, #bars {
+	width: 34px;
+	height: 32px;
+	padding: 0;
+	margin-right: 0;
+	margin-left: 10px;
+	border-bottom: 2px solid #71c73e;
+	float: right;
+	cursor: pointer;
+}
+
+#lines.active, #bars.active {
+	background: #82d344;
+	background: -moz-linear-gradient(top,  #82d344 0%, #71c73e 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#82d344), color-stop(100%,#71c73e));
+	background: -webkit-linear-gradient(top,  #82d344 0%,#71c73e 100%);
+	background: -o-linear-gradient(top,  #82d344 0%,#71c73e 100%);
+	background: -ms-linear-gradient(top,  #82d344 0%,#71c73e 100%);
+	background: linear-gradient(to bottom,  #82d344 0%,#71c73e 100%);
+}
+
+#lines span, #bars span {
+	display: block;
+	width: 34px;
+	height: 32px;
+	background: url('http://designmodo.com/demo/interactivegraph/img/lines.png') no-repeat 9px 12px;
+}
+
+#bars span { background: url('http://designmodo.com/demo/interactivegraph/img/bars.png') no-repeat center 10px; }
+
+#lines.active span { background-image: url('http://designmodo.com/demo/interactivegraph/img/lines_active.png'); }
+#bars.active span { background-image: url('http://designmodo.com/demo/interactivegraph/img/bars_active.png'); }
+
+/* Hide the First and Last Y Label */
+.yAxis .tickLabel:first-child,
+.yAxis .tickLabel:last-child { display: none; }
+
+/* Clear Floats */
+.graph-info:before, .graph-info:after,
+.graph-container:before, .graph-container:after {
+	content: '';
+	display: block;
+	clear: both;
+}
+</style>
+<meta name="robots" content="noindex,follow" />
+</head>
+
+<body>
+
+<!-- Graph HTML -->
+<div id="graph-wrapper">
+	<div class="graph-info">
+		<a href="javascript:void(0)" class="speed">Speed</a>
+		<a href="javascript:void(0)" class="heading">Heading</a>
+
+		<a href="#" id="bars"><span></span></a>
+		<a href="#" id="lines" class="active"><span></span></a>
+	</div>
+
+	<div class="graph-container">
+		<div id="graph-lines"></div>
+		<div id="graph-bars"></div>
+	</div>
+</div>
+<!-- end Graph HTML -->
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="http://thethingbox:1880/api/js/jquery.flot.min.js"></script>
+<script>
+
+	/* Graph Data ##############################################
+	var graphData = [{
+			// Visits
+			data: [ [6, 1300], [7, 1600], [8, 1900], [9, 2100], [10, 2500], [11, 2200], [12, 2000], [13, 1950], [14, 1900], [15, 2000] ],
+			color: '#71c73e'
+		}, {
+			// heading Visits
+			data: [ [6, 500], [7, 600], [8, 550], [9, 600], [10, 800], [11, 900], [12, 800], [13, 850], [14, 830], [15, 1000] ],
+			color: '#77b7c5',
+			points: { radius: 4, fillColor: '#77b7c5' }
+		}
+	];
+	*/
+	function loadGraphData() {
+	//load graph data from couchDb
+	
+	$.getJSON("http://thethingbox:1880/api/torque_db?querystring=_all_docs%3Fdescending%3Dtrue%26limit%3D20%26include_docs%3Dtrue%26timestamp%3D" + Date.now() , function(json) {
+		
+		
+		//load event data into graph array
+		var graphData = [
+			{
+				// Speed
+				data: [ ],
+				color: '#71c73e'
+			},
+			{
+				// Heading
+				data: [ ],
+				color: '#77b7c5'
+			}
+			
+		];
+		
+		for(var i=1;i<21;i++) {
+			var speedArrayVal=[];
+			var headingArrayVal=[];
+
+			speedArrayVal[0]=i;
+			speedArrayVal[1]=Math.round(json.rows[i-1].doc['GPS Speed']); 
+			graphData[0].data[i-1]=speedArrayVal;
+
+			headingArrayVal[0]=i;
+			headingArrayVal[1]=json.rows[i-1].doc['GPS bearing']; 
+			graphData[1].data[i-1]=headingArrayVal;
+		}
+		
+		
+		// Lines Graph #############################################
+		$.plot($('#graph-lines'), graphData, {
+			series: {
+				points: {
+					show: true,
+					radius: 5
+				},
+				lines: {
+					show: true
+				},
+				shadowSize: 0
+			},
+			grid: {
+				color: '#646464',
+				borderColor: 'transparent',
+				borderWidth: 20,
+				hoverable: true
+			},
+			xaxis: {
+				tickColor: 'transparent',
+				tickDecimals: 2
+			},
+			yaxis: {
+				tickSize: 100
+			}
+		});
+	
+		// Bars Graph ##############################################
+		$.plot($('#graph-bars'), graphData, {
+			series: {
+				bars: {
+					show: true,
+					barWidth: .9,
+					align: 'center'
+				},
+				shadowSize: 0
+			},
+			grid: {
+				color: '#646464',
+				borderColor: 'transparent',
+				borderWidth: 20,
+				hoverable: true
+			},
+			xaxis: {
+				tickColor: 'transparent',
+				tickDecimals: 2
+			},
+			yaxis: {
+				tickSize: 1000
+			}
+		});
+	
+		// Graph Toggle ############################################
+		$('#graph-bars').hide();
+	
+		$('#lines').on('click', function (e) {
+			$('#bars').removeClass('active');
+			$('#graph-bars').fadeOut();
+			$(this).addClass('active');
+			$('#graph-lines').fadeIn();
+			e.preventDefault();
+		});
+	
+		$('#bars').on('click', function (e) {
+			$('#lines').removeClass('active');
+			$('#graph-lines').fadeOut();
+			$(this).addClass('active');
+			$('#graph-bars').fadeIn().removeClass('hidden');
+			e.preventDefault();
+		});
+	
+		// Tooltip #################################################
+		function showTooltip(x, y, contents) {
+			$('<div id="tooltip">' + contents + '</div>').css({
+				top: y - 16,
+				left: x + 20
+			}).appendTo('body').fadeIn();
+		}
+	
+		var previousPoint = null;
+	
+		$('#graph-lines, #graph-bars').bind('plothover', function (event, pos, item) {
+			if (item) {
+				if (previousPoint != item.dataIndex) {
+					previousPoint = item.dataIndex;
+					$('#tooltip').remove();
+					var x = item.datapoint[0],
+						y = item.datapoint[1];
+					if (item.seriesIndex==0) {
+							showTooltip(item.pageX, item.pageY, y + ' mph');
+						} else {
+						showTooltip(item.pageX, item.pageY, y + ' deg');
+					}
+				}
+			} else {
+				$('#tooltip').remove();
+				previousPoint = null;
+			}
+		});
+	});
+}
+
+$(document).ready(function() {
+	setInterval(loadGraphData,1000);
+	});
+
+</script>
+
+</body>
+
+</html>
