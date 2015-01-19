@@ -1,3 +1,56 @@
+
+
+
+function showGraph(event, properties) {
+   	  
+   	var index=parseInt(properties.items[0].substring(5));
+   	var startTime=new Date(tripsArray[index].doc.startTime);
+   	var endTime=new Date(tripsArray[index].doc.endTime);
+   	var eventCount=tripsArray[index].doc.eventCount;
+   	var startTimeString=startTime.toUTCString();
+   	var endTimeString=endTime.toUTCString();
+	startTimeString=startTimeString.substring(0,startTimeString.length-3);
+	endTimeString=endTimeString.substring(0,endTimeString.length-3);
+
+   	$('#tripStartDate').html('Start: ' + startTimeString);  	
+   	$('#tripEndDate').html('End: ' + endTimeString);  	
+   	$('#tripEventCount').html('# Events: ' + eventCount);
+
+
+   	//download all events
+   	$.getJSON( '/db/_all_docs?startkey="event:' + tripsArray[index].doc.startTime + '"&endkey="event:' + tripsArray[index].doc.endTime + '"&include_docs=true' , function( indata ) {
+	   	var eventsArray=indata.rows;
+
+		var container = document.getElementById('visualization');
+		container.innerHTML='';
+		  var items = [];
+		  for(var i=0;i<eventsArray.length;i=i+1){
+		  	var eventId=eventsArray[i].id;
+		  	eventId=parseInt(eventId.substring(6));
+		  	var GPSSpeed=parseInt(eventsArray[i].doc['GPS Speed']);
+		  	//alert(GPSSpeed);
+		  	var eventObject={x: eventId , y: GPSSpeed, content: GPSSpeed};
+		  	items.push(eventObject);
+		  }
+
+		 
+		  var dataset = new vis.DataSet(items);
+		  var options = {
+		    start: tripsArray[index].doc.startTime,
+		    end: tripsArray[index].doc.endTime,
+		    catmullRom : false
+
+		  };
+		  
+		  var graph2d = new vis.Graph2d(container, dataset, options);
+
+
+	   	//alert(JSON.stringify(eventsArray[0]));
+   	});
+}
+
+
+var tripsArray;
 function showTimeline(startDate, endDate, divContainer)
 {
 
@@ -10,7 +63,7 @@ function showTimeline(startDate, endDate, divContainer)
     $.getJSON( '/db/_all_docs?startkey="trip:0"&endkey="trip:9999999999"&include_docs=true' , function( indata ) {
 			  //alert(JSON.stringify(data));
 			  var jsonTrips=indata;
-			  var tripsArray=jsonTrips.rows;
+			  tripsArray=jsonTrips.rows;
 
 			  // create a data set with groups
 			  //var names = ['John', 'Alston', 'Lee', 'Grant'];
@@ -43,7 +96,9 @@ function showTimeline(startDate, endDate, divContainer)
 			      {id: 6, content: 'item 6', start: '2013-04-27'} 
 			    ]);*/
 				var items = new vis.DataSet(timelineObjectArray);
+			    
 
+ 
 
 
 			    // Configuration for the Timeline
@@ -60,8 +115,19 @@ function showTimeline(startDate, endDate, divContainer)
 				timeline.setGroups(groups);
 				timeline.setItems(items);
 			    //alert(container.innerHTML);
+    			
+    			timeline.on('select', function (properties) {
+			      showGraph('select', properties);
+			    });
+
+			    
+
+
 			});
 }
+
+
+
 
 (function ($) {
   $(document).ready(function () {

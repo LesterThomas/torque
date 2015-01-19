@@ -23,8 +23,6 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
- 
-
     <header class="navbar-inverse">
 	    <div class="container">
 			<nav  role="navigation">
@@ -75,27 +73,51 @@
 		  </div>
 		  <div class="panel-body">
 		    This page shows a timeline trips from Torque <a href="https://github.com/LesterThomas/torque">Torque on GitHub</a>
-		    
 		  </div>
-		</div>	  	
+		</div>
+
+	</div>
+
+	<div class="row">	
+
 		<div class="panel panel-default col-sm-10 col-sm-offset-1">
 		  <div class="panel-heading">
 		    <h3 class="panel-title">Trips</h3>
 		  </div>
-
-		  <div class="panel-body">
-		    
+		  <div class="panel-body">   
 		  	<div id="mytimeline">
 			    <br /><br />
-		  	</div>			    
-
-	  
+		  	</div>			    	  
 		  </div>
 		</div>
 		
+	</div>
 
+	<div class="row" id="graphRow">	
+
+		<div class="panel panel-default col-sm-2 col-sm-offset-1">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Data</h3>
+		  </div>
+		  <div class="panel-body">  
+		    <div id="tripStartDate"> </div>
+		    <div id="tripEndDate"> </div>
+		    <div id="tripEventCount"> </div>	    	  
+		  </div>
+		</div>
+
+		<div class="panel panel-default col-sm-7 col-sm-offset-1">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Graph</h3>
+		  </div>
+		  <div class="panel-body">   
+			    <div id="visualization"></div>
+			    <br /><br />	    	  
+		  </div>
+		</div>
 		
 	</div>
+
 	<p /> <br/>
 	<div class="container">
       <div class="footer">
