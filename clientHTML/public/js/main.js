@@ -29,10 +29,21 @@ function showGraph(event, properties) {
 		  	eventId=parseInt(eventId.substring(6));
 		  	var GPSSpeed=parseInt(eventsArray[i].doc['GPS Speed']);
 		  	//alert(GPSSpeed);
-		  	var eventObject={x: eventId , y: GPSSpeed, content: GPSSpeed};
+		  	var eventObject={x: eventId , y: GPSSpeed, content: GPSSpeed, group: 0};
 		  	items.push(eventObject);
 		  }
-
+		var groups = new vis.DataSet();
+        groups.add({
+	        id: 0,
+	        content: 'GPS Speed',
+	        options: {
+	            drawPoints: {
+	                style: 'square' // square, circle
+	            },
+	            shaded: {
+	                orientation: 'bottom' // top, bottom
+	            }
+        }});
 		 
 		  var dataset = new vis.DataSet(items);
 		  var options = {
@@ -42,7 +53,7 @@ function showGraph(event, properties) {
 
 		  };
 		  
-		  var graph2d = new vis.Graph2d(container, dataset, options);
+		  var graph2d = new vis.Graph2d(container, dataset, groups, options);
 
 
 	   	//alert(JSON.stringify(eventsArray[0]));
