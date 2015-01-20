@@ -1,5 +1,9 @@
 
-
+var graphStructure={
+	"GPS Speed":"Graph",
+	"GPS Bearing":"Graph",
+	"GPS LatLong":"Map"
+};
 
 function showGraph(event, properties) {
    	  
