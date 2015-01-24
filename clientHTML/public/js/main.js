@@ -1,9 +1,22 @@
 
 var graphStructure={
-	"GPS Speed":"Graph",
-	"GPS Bearing":"Graph",
+	"GPS Speed":"Graph MPH",
+	"GPS Bearing":"Graph Bearing",
+	"Fuel rate":"Graph Fuel rate",
 	"GPS LatLong":"Map"
 };
+
+function toggleGraph(inContainer, inInputbox) {
+	var container = document.getElementById(inContainer);
+	if (inInputbox.checked) {
+		container.style.display='block';
+	} else {
+		container.style.display='none';
+	}
+	
+}
+
+var eventsArray=[];
 
 function showGraph(event, properties) {
    	  
@@ -16,53 +29,70 @@ function showGraph(event, properties) {
 	startTimeString=startTimeString.substring(0,startTimeString.length-3);
 	endTimeString=endTimeString.substring(0,endTimeString.length-3);
 
-   	$('#tripStartDate').html('Start: ' + startTimeString);  	
-   	$('#tripEndDate').html('End: ' + endTimeString);  	
-   	$('#tripEventCount').html('# Events: ' + eventCount);
 
 
    	//download all events
    	$.getJSON( '/db/_all_docs?startkey="event:' + tripsArray[index].doc.startTime + '"&endkey="event:' + tripsArray[index].doc.endTime + '"&include_docs=true' , function( indata ) {
-	   	var eventsArray=indata.rows;
+		eventsArray=indata.rows;
+		$('#tripStartDate').html('Start: ' + startTimeString);  	
+	   	$('#tripEndDate').html('End: ' + endTimeString);  	
+	   	$('#tripEventCount').html('# Events: ' + eventCount);
 
-		var container = document.getElementById('visualization');
-		container.innerHTML='';
-		  var items = [];
-		  for(var i=0;i<eventsArray.length;i=i+1){
-		  	var eventId=eventsArray[i].id;
-		  	eventId=parseInt(eventId.substring(6));
-		  	var GPSSpeed=parseInt(eventsArray[i].doc['GPS Speed']);
-		  	//alert(GPSSpeed);
-		  	var eventObject={x: eventId , y: GPSSpeed, content: GPSSpeed, group: 0};
-		  	items.push(eventObject);
-		  }
-		var groups = new vis.DataSet();
-        groups.add({
-	        id: 0,
-	        content: 'GPS Speed',
-	        options: {
-	            drawPoints: {
-	                style: 'square' // square, circle
-	            },
-	            shaded: {
-	                orientation: 'bottom' // top, bottom
-	            }
-        }});
-		 
-		  var dataset = new vis.DataSet(items);
-		  var options = {
-		    start: tripsArray[index].doc.startTime,
-		    end: tripsArray[index].doc.endTime,
-		    catmullRom : false
-
-		  };
-		  
-		  var graph2d = new vis.Graph2d(container, dataset, groups, options);
+		//graphStructure
+		var outHTML='';
+		for(var key in graphStructure) {
+		    var value = graphStructure[key];
+		    outHTML=outHTML+'<br /><input type="checkbox" checked onclick="toggleGraph(\'' + value + '\',this)">' + key + '</input>';
+			}
+		//alert(outHTML);
+		$('#tripGraphOptions').html(outHTML);
+		buildGraph('GPS Speed', index);
+		buildGraph('Fuel rate', index);
 
 
-	   	//alert(JSON.stringify(eventsArray[0]));
-   	});
+	});
 }
+
+
+
+function buildGraph(graphType, tripNumber)	{ //assume global variable eventsArray already exists
+	
+	var graphContainer=graphStructure[graphType];
+	var container = document.getElementById(graphContainer);
+	container.innerHTML='';
+	var items = [];
+	for(var i=0;i<eventsArray.length;i=i+1){
+	  	var eventId=eventsArray[i].id;
+	  	eventId=parseInt(eventId.substring(6));
+	  	var eventValue=parseInt(eventsArray[i].doc[graphType]);
+	  	//alert(GPSSpeed);
+	  	var eventObject={x: eventId , y: eventValue, content: eventValue, group: 0};
+	  	items.push(eventObject);
+	}
+	var groups = new vis.DataSet();
+	groups.add({
+	    id: 0,
+	    content: graphType,
+	    options: {
+	        drawPoints: {
+	            style: 'square' // square, circle
+	        },
+	        shaded: {
+	            orientation: 'bottom' // top, bottom
+	        }
+	}});
+	 
+	var dataset = new vis.DataSet(items);
+	var options = {
+	    start: tripsArray[tripNumber].doc.startTime,
+	    end: tripsArray[tripNumber].doc.endTime,
+	    catmullRom : false
+	  };
+	  
+	var graph2d = new vis.Graph2d(container, dataset, groups, options);
+	//alert(JSON.stringify(eventsArray[0]));
+}
+
 
 
 var tripsArray;
