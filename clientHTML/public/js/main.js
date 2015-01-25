@@ -1,34 +1,10 @@
 
 var graphStructure={
-	"GPS Speed":"Graph",
-	"GPS Bearing":"Graph",
-	"Fuel rate":"Graph",
-	"Turbo Boost":"Graph",
-	"Voltage":"Graph",
-	"Accelerometer (X)":"Graph",
-	"Accelerometer (Y)":"Graph",
-	"Accelerometer (Z)":"Graph",
-	"Accelerometer (Total)":"Graph",
-	"GPS vs OBD speed diff":"Graph",
-	"Accelerator PedalPosition D":"Graph",
-	"Ambient air temp":"Graph",
-	"Accelerator PedalPosition E":"Graph",
-	"Relative Throttle Position":"Graph",
-	"Barometric pressure (from vehicle)":"Graph",
-	"Barometer (on Android device)":"Graph",
-	"Fuel Rail Pressure":"Graph",
-	"Fuel flow rate/hour":"Graph",
-	"Catalyst Temperature (Bank 1 Sensor 1)":"Graph",
-	"Fuel used (trip)":"Graph",
-	"Fuel Remaining (Calculated from vehicle profile)":"Graph",
-	"Engine kW (At the wheels)":"Graph",
-	"Kilometers Per Litre(Instant)":"Graph",
-	"Kilometers Per Litre(Long Term Average)":"Graph",
-	"Distance to empty (Estimated)":"Graph",
+	"GPS Speed":"Graph MPH",
+	"GPS Bearing":"Graph Bearing",
+	"Fuel rate":"Graph Fuel rate",
 	"GPS LatLong":"Map"
 };
-
-
 
 function toggleGraph(inContainer, inInputbox) {
 	var container = document.getElementById(inContainer);
@@ -53,31 +29,25 @@ function showGraph(event, properties) {
 	startTimeString=startTimeString.substring(0,startTimeString.length-3);
 	endTimeString=endTimeString.substring(0,endTimeString.length-3);
 
-	var visContainer = document.getElementById('Visualisation');
-	$('#tripStartDate').html('Start: ' + startTimeString);  	
-   	$('#tripEndDate').html('End: ' + endTimeString);  	
-   	$('#tripEventCount').html('# Events: ' + eventCount);
-	visContainer.innerHTML='';
+
 
    	//download all events
    	$.getJSON( '/db/_all_docs?startkey="event:' + tripsArray[index].doc.startTime + '"&endkey="event:' + tripsArray[index].doc.endTime + '"&include_docs=true' , function( indata ) {
 		eventsArray=indata.rows;
-
+		$('#tripStartDate').html('Start: ' + startTimeString);  	
+	   	$('#tripEndDate').html('End: ' + endTimeString);  	
+	   	$('#tripEventCount').html('# Events: ' + eventCount);
 
 		//graphStructure
 		var outHTML='';
 		for(var key in graphStructure) {
 		    var value = graphStructure[key];
-		    outHTML=outHTML+'<br /><input type="checkbox" checked onclick="toggleGraph(\'' + key + '\',this)">' + key + '</input>';
-		    //alert(value);
-		    if (value=="Graph") {
-		    	buildGraph(key, index);
-		    }
-		}
+		    outHTML=outHTML+'<br /><input type="checkbox" checked onclick="toggleGraph(\'' + value + '\',this)">' + key + '</input>';
+			}
 		//alert(outHTML);
 		$('#tripGraphOptions').html(outHTML);
-		
-		
+		buildGraph('GPS Speed', index);
+		buildGraph('Fuel rate', index);
 
 
 	});
@@ -87,15 +57,14 @@ function showGraph(event, properties) {
 
 function buildGraph(graphType, tripNumber)	{ //assume global variable eventsArray already exists
 	
-	//var graphContainer=graphStructure[graphType];
-	var visContainer = document.getElementById('Visualisation');
-	visContainer.innerHTML=visContainer.innerHTML+'<div id="' + graphType + '"></div>';
-	var container = document.getElementById(graphType);
+	var graphContainer=graphStructure[graphType];
+	var container = document.getElementById(graphContainer);
+	container.innerHTML='';
 	var items = [];
 	for(var i=0;i<eventsArray.length;i=i+1){
 	  	var eventId=eventsArray[i].id;
 	  	eventId=parseInt(eventId.substring(6));
-	  	var eventValue=parseFloat(eventsArray[i].doc[graphType]);
+	  	var eventValue=parseInt(eventsArray[i].doc[graphType]);
 	  	//alert(GPSSpeed);
 	  	var eventObject={x: eventId , y: eventValue, content: eventValue, group: 0};
 	  	items.push(eventObject);
@@ -117,11 +86,7 @@ function buildGraph(graphType, tripNumber)	{ //assume global variable eventsArra
 	var options = {
 	    start: tripsArray[tripNumber].doc.startTime,
 	    end: tripsArray[tripNumber].doc.endTime,
-	    catmullRom : false,
-	    height: '200px',
-	    shaded: {enabled:true},
-	    legend: true,
-	    drawPoints: {enabled:true, size:2,style:'circle'}
+	    catmullRom : false
 	  };
 	  
 	var graph2d = new vis.Graph2d(container, dataset, groups, options);
