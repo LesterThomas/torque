@@ -1,37 +1,41 @@
 
 var graphStructure={
-	"GPS Speed":"Graph",
-	"GPS Bearing":"Graph",
-	"Fuel rate":"Graph",
-	"Turbo Boost":"Graph",
-	"Voltage":"Graph",
-	"Accelerometer (X)":"Graph",
-	"Accelerometer (Y)":"Graph",
-	"Accelerometer (Z)":"Graph",
-	"Accelerometer (Total)":"Graph",
-	"GPS vs OBD speed diff":"Graph",
-	"Accelerator PedalPosition D":"Graph",
-	"Ambient air temp":"Graph",
-	"Accelerator PedalPosition E":"Graph",
-	"Relative Throttle Position":"Graph",
-	"Barometric pressure (from vehicle)":"Graph",
-	"Barometer (on Android device)":"Graph",
-	"Fuel Rail Pressure":"Graph",
-	"Fuel flow rate/hour":"Graph",
-	"Catalyst Temperature (Bank 1 Sensor 1)":"Graph",
-	"Fuel used (trip)":"Graph",
-	"Fuel Remaining (Calculated from vehicle profile)":"Graph",
-	"Engine kW (At the wheels)":"Graph",
-	"Kilometers Per Litre(Instant)":"Graph",
-	"Kilometers Per Litre(Long Term Average)":"Graph",
-	"Distance to empty (Estimated)":"Graph",
-	"GPS LatLong":"Map"
+	"GPS Speed":{"type":"Graph", "displayed":true},
+	"GPS Bearing":{"type":"Graph", "displayed":false},
+	"Fuel rate":{"type":"Graph", "displayed":false},
+	"Turbo Boost":{"type":"Graph", "displayed":false},
+	"Voltage":{"type":"Graph", "displayed":false},
+	"Accelerometer (X)":{"type":"Graph", "displayed":false},
+	"Accelerometer (Y)":{"type":"Graph", "displayed":false},
+	"Accelerometer (Z)":{"type":"Graph", "displayed":false},
+	"Accelerometer (Total)":{"type":"Graph", "displayed":false},
+	"GPS vs OBD speed diff":{"type":"Graph", "displayed":false},
+	"Accelerator PedalPosition D":{"type":"Graph", "displayed":false},
+	"Ambient air temp":{"type":"Graph", "displayed":false},
+	"Accelerator PedalPosition E":{"type":"Graph", "displayed":false},
+	"Relative Throttle Position":{"type":"Graph", "displayed":false},
+	"Barometric pressure (from vehicle)":{"type":"Graph", "displayed":false},
+	"Barometer (on Android device)":{"type":"Graph", "displayed":false},
+	"Fuel Rail Pressure":{"type":"Graph", "displayed":false},
+	"Fuel flow rate/hour":{"type":"Graph", "displayed":false},
+	"Catalyst Temperature (Bank 1 Sensor 1)":{"type":"Graph", "displayed":false},
+	"Fuel used (trip)":{"type":"Graph", "displayed":false},
+	"Fuel Remaining (Calculated from vehicle profile)":{"type":"Graph", "displayed":false},
+	"Engine kW (At the wheels)":{"type":"Graph", "displayed":false},
+	"Kilometers Per Litre(Instant)":{"type":"Graph", "displayed":false},
+	"Kilometers Per Litre(Long Term Average)":{"type":"Graph", "displayed":false},
+	"Distance to empty (Estimated)":{"type":"Graph", "displayed":false},
+	"GPS LatLong":{"type":"Map", "displayed":true}
 };
 
 
 
-function toggleGraph(inContainer, inInputbox) {
-	var container = document.getElementById(inContainer);
+function toggleGraph(inKey, inInputbox) {
+	if (graphStructure[inKey].displayed==false) {
+		buildGraph(inKey, currentTrip);
+		
+	}
+	var container = document.getElementById(inKey);
 	if (inInputbox.checked) {
 		container.style.display='block';
 	} else {
@@ -41,10 +45,11 @@ function toggleGraph(inContainer, inInputbox) {
 }
 
 var eventsArray=[];
-
+var currentTrip=0;
 function showGraph(event, properties) {
    	  
    	var index=parseInt(properties.items[0].substring(5));
+   	currentTrip=index;
    	var startTime=new Date(tripsArray[index].doc.startTime);
    	var endTime=new Date(tripsArray[index].doc.endTime);
    	var eventCount=tripsArray[index].doc.eventCount;
@@ -66,18 +71,23 @@ function showGraph(event, properties) {
 
 		//graphStructure
 		var outHTML='';
+		var graphContainers='';
+		var checked='checked';
 		for(var key in graphStructure) {
 		    var value = graphStructure[key];
-		    outHTML=outHTML+'<br /><input type="checkbox" checked onclick="toggleGraph(\'' + key + '\',this)">' + key + '</input>';
+		    outHTML=outHTML+'<br /><input type="checkbox" ' + checked + ' onclick="toggleGraph(\'' + key + '\',this)">' + key + '</input>';
+		    checked='';  //set first input as checked
+		    graphContainers= graphContainers + '<div style="border:1px; solid black; padding:5px;" id="' + key + '"></div>' ;
 		    //alert(value);
-		    if (value=="Graph") {
-		    	buildGraph(key, index);
-		    }
+		    graphStructure[key].displayed=false;
+
 		}
 		//alert(outHTML);
 		$('#tripGraphOptions').html(outHTML);
 		
-		
+		$('#Visualisation').html(graphContainers);
+		//alert(graphContainers);
+		buildGraph('GPS Speed', index);
 
 
 	});
@@ -88,9 +98,10 @@ function showGraph(event, properties) {
 function buildGraph(graphType, tripNumber)	{ //assume global variable eventsArray already exists
 	
 	//var graphContainer=graphStructure[graphType];
-	var visContainer = document.getElementById('Visualisation');
-	visContainer.innerHTML=visContainer.innerHTML+'<div id="' + graphType + '"></div>';
 	var container = document.getElementById(graphType);
+	graphStructure[graphType].displayed=true;
+	//visContainer.innerHTML=visContainer.innerHTML+'<div id="' + graphType + '"></div>';
+	//var container = document.getElementById(graphType);
 	var items = [];
 	for(var i=0;i<eventsArray.length;i=i+1){
 	  	var eventId=eventsArray[i].id;
