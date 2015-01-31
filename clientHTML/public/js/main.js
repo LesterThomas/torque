@@ -1,3 +1,5 @@
+var develop=true;
+
 
 var graphStructure={
 	"GPS Speed":{"type":"Graph", "displayed":true},
@@ -65,7 +67,15 @@ function showGraph(event, properties) {
 	visContainer.innerHTML='';
 
    	//download all events
-   	$.getJSON( '/db/_all_docs?startkey="event:' + tripsArray[index].doc.startTime + '"&endkey="event:' + tripsArray[index].doc.endTime + '"&include_docs=true' , function( indata ) {
+	var url;
+	if (develop)
+	{
+		url='/events.json';
+	} else {
+		url='/db/_all_docs?startkey="event:' + tripsArray[index].doc.startTime + '"&endkey="event:' + tripsArray[index].doc.endTime + '"&include_docs=true';
+	}
+   	$.getJSON( url , function( indata ) {
+		//alert(JSON.stringify(indata));
 		eventsArray=indata.rows;
 
 
@@ -75,9 +85,9 @@ function showGraph(event, properties) {
 		var checked='checked';
 		for(var key in graphStructure) {
 		    var value = graphStructure[key];
-		    outHTML=outHTML+'<br /><input type="checkbox" ' + checked + ' onclick="toggleGraph(\'' + key + '\',this)">' + key + '</input>';
-		    checked='';  //set first input as checked
-		    graphContainers= graphContainers + '<div style="border:1px; solid black; padding:5px;" id="' + key + '"></div>' ;
+		    outHTML=outHTML+'<br /><input type="checkbox" '+checked+' id="input'+ key +'" onclick="toggleGraph(\'' + key + '\',this)">' + key + '</input>';
+		    checked='';
+		    graphContainers= graphContainers + '<div style="border:1px; solid black; display:none; padding:5px;" id="' + key + '"></div>' ;
 		    //alert(value);
 		    graphStructure[key].displayed=false;
 
@@ -87,7 +97,8 @@ function showGraph(event, properties) {
 		
 		$('#Visualisation').html(graphContainers);
 		//alert(graphContainers);
-		buildGraph('GPS Speed', index);
+		//buildGraph('GPS Speed', index);
+		toggleGraph('GPS Speed',document.getElementById('inputGPS Speed'));
 
 
 	});
@@ -150,9 +161,16 @@ function showTimeline(startDate, endDate, divContainer)
 	var timelineObjectArray=[];
 	var ObjectId=1;
 
-	//alert(oneWeekAgo);
-    $.getJSON( '/db/_all_docs?startkey="trip:0"&endkey="trip:9999999999"&include_docs=true' , function( indata ) {
-			  //alert(JSON.stringify(data));
+	
+	var url;
+	if (develop)
+	{
+		url='/trips.json';
+	} else {
+		url= '/db/_all_docs?startkey="trip:0"&endkey="trip:9999999999"&include_docs=true';
+	}
+    $.getJSON(url , function( indata ) {
+			  //alert(JSON.stringify(indata));
 			  var jsonTrips=indata;
 			  tripsArray=jsonTrips.rows;
 
@@ -217,6 +235,9 @@ function showTimeline(startDate, endDate, divContainer)
 			});
 }
 
+function aboutClicked() {
+	$('#aboutPanel').toggle();
+}
 
 
 

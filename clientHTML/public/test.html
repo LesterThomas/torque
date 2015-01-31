@@ -48,78 +48,22 @@
 			</nav>
 		</div>
 	</header>
-	<div style="padding:20px;">
-		<div id="aboutPanel" style="display:none" class="row">	
-			<div class=" col-sm-12 ">
-				<div class="panel panel-default  ">
-				  <div class="panel-heading">
-					<h3 class="panel-title">About</h3>
-				  </div>
-				  <div class="panel-body">   
-					Car Telemetry viewer displays car telemetry data uploaded via an OBD II device and the Torque Android app. 
-					The source to this is available: <a href="https://github.com/LesterThomas/torque">Car Telemetry via Torque on GitHub</a>
-					<p>
-						<img style="width:100%; max-width:600px;" align="center" src="/CarTelemetry.png"> 		
-					</p>
-				  </div>
-				</div>
-			</div>
+
+	
+	<div class="row">	
+		<div class="panel panel-default col-sm-12 " >
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Trips</h3>
+		  </div>
+		  <div class="panel-body">   
+		  	<div id="mytimeline">
+			    <br /><br />
+		  	</div>			    	  
+		  </div>
 		</div>
-		
-		<div class="row">	
-			<div class=" col-sm-12 " >
-				<div class="panel panel-default  " >
-				  <div class="panel-heading">
-					<h3 class="panel-title">Trips</h3>
-				  </div>
-				  <div class="panel-body">   
-					<div id="mytimeline">
-						<br /><br />
-					</div>			    	  
-				  </div>
-				</div>
-			</div>
-		</div>
+	</div>
 
-		<div class="row" id="graphRow">	
-			
-			<div class=" col-sm-3 col-xs-12" >
-				<div class="panel panel-default " >
-				  <div class="panel-heading">
-					<h3 class="panel-title">Data</h3>
-				  </div>
-				  <div class="panel-body">  
-					<div id="tripStartDate">This page shows a timeline of car trips. Click on a trip to display event data for that trip. You can scroll the timeline left and right by swiping.
-
-
-					</div>
-					<div id="tripEndDate"> </div>
-					<div id="tripEventCount"> </div>	
-					<br /><br />
-
-					<div id="tripGraphOptions"> </div>	
-
-				  </div>
-				</div>
-			</div>
-			
-			<div class=" col-sm-9 col-xs-12" >
-				<div class="panel panel-default " >
-				  <div class="panel-heading">
-					<h3 class="panel-title">Graph</h3>
-				  </div>
-				  <div class="panel-body">   
-						<div id="Visualisation"></div>
-
-						<br /><br />	    	  
-				  </div>
-				</div>
-			</div>
-			
-		</div>
-
-		<br /><br/>
-		</div>
+	<p /> <br/>
 	<div class="container">
       <div class="footer">
         <p><span class="glyphicon glyphicon-copyright-mark"></span> Lester Thomas</p>
